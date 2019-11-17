@@ -44,12 +44,11 @@
 
 ### Operations & Config Template
 
-  Transformation
+  Transformation template (`python transform.py *.yml`)
 
 ```yaml
 _meta_:
     input_root: 'raw'  # could either be a directory or a (single) image path
-    compare_root: ''  # set only when comparison is needed/ should have the same struture with input_root's
     output_root: 'trans'
     recursively: True  # whether enable recursively folder detecting
     # folder_list: ["12", "4", "29", "94", "96"]  # if assigned, only selected folders will be handled

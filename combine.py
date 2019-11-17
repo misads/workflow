@@ -1,14 +1,19 @@
-import argparse
-import os
-import numpy as np
-from cut_rec import get_file_paths
-import cv2
+# encoding=utf-8
 
+import numpy as np
+import os
+import argparse
+import cv2
+import numpy as np
+
+from base import Base
 from load_config import load_yml
+from misc_utils import checkdir, attach_file_suffix
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='manual annotation images for comparison.')
+    parser = argparse.ArgumentParser(description='resize images.')
+
     parser.add_argument('ymlpath')
 
     args = parser.parse_args()
@@ -16,57 +21,101 @@ def parse_args():
     return args
 
 
-def combine(root_path, folderlist=None, cfg='configs/config.yml'):
-    cfg = load_yml(cfg, 'combination')
-
-    image_size = cfg['image_size']
-    gap = cfg['gap']
-    tile = cfg['tiles']
-    if folderlist:
-        paths = folderlist
-    else:
-        auto = cfg['folder_path'] == 'auto'
-        if auto:
-            if not root_path:
-                root_path = cfg['input_dir']
-            paths = os.listdir(root_path)
-            paths.sort()
+class Combination(Base):
+    def __init__(self, cfg):
+        Base.__init__(self, cfg)
+        self._combination = self.cfg['combination']
+        self._axis = self._combination['axis']
+        if 'one_folder_axis' in self._axis:
+            if self._axis == 'xy':
+                self._one_folder_axis = self._axis['one_folder_axis']
+            else:
+                self._one_folder_axis = None
         else:
-            paths = cfg['folder']
+            self._one_folder_axis = None
 
-    w1, h1 = image_size['w'], image_size['h']  # image will first be resized to this size
-    dw1, dh1 = gap['dw'], gap['dh']  # space between images
-    nw, nh = tile['w'], tile['h']  # nw × nh, nh should be the number of folders
+        self._tiles = self._combination['tiles']
 
-    print(paths)
+        if 'gap' in self._combination:
+            self._gap = self._combination['gap']
+        else:
+            self._gap = {'dw': 0, 'dh': 0}
 
-    width = nw * w1 + (nw - 1) * dw1  # width for combination image
-    height = nh * h1 + (nh - 1) * dh1
+        if 'image_size' in self._combination:
+            self._image_size = self._combination['image_size']
+            self._create_background()
+        else:
+            self._image_size = None
 
-    back = np.ones((height, width, 3), np.uint8) * 255  # white background
+    def _create_background(self):
+        nw, nh = self._tiles['w'], self._tiles['h']
+        w1, h1 = self._image_size['w'], self._image_size['h']
+        dw1, dh1 = self._gap['dw'], self._gap['dh']
+        width = nw * w1 + (nw - 1) * dw1  # width for combination image
+        height = nh * h1 + (nh - 1) * dh1
 
-    # combination
-    for h in range(nh):
-        try:
-            path = paths[h]
-            file_path = os.listdir(os.path.join(root_path, path))
-            file_path.sort()
+        self._back = np.ones((height, width, 3), np.uint8) * 255  # white background
 
-            for i in range(nw):
-                img_path = os.path.join(root_path, path, file_path[i])
-                img = cv2.imread(img_path)
-                img = cv2.resize(img, (w1, h1))
-                # pt1y,pt2y, pt1x,pt2x = h*(h1+dh1),h*(h1+dh1)+h1, i*(w1+dw1),i*(w1+dw1)+w1
-                # print(pt1y,pt2y, pt1x,pt2x)
-                back[h * (h1 + dh1):h * (h1 + dh1) + h1, i * (w1 + dw1):i * (w1 + dw1) + w1] = img
-        except:
+    def _handle_image(self, input_path, output_path, compare_path=None):
+        if not self._image_size:
+            img = cv2.imread(input_path)
+            h, w, _ = img.shape
+            self._image_size = {'w': w, 'h': h}
+            self._create_background()
+
+        if self._back is None:
+            self._create_background()
+
+    def combine(self):
+        folders = self.folders
+        keylist = []
+        for f in folders:
+            if f:
+               keylist.append(f)
+        filelist = folders[keylist[0]]
+
+        if self._axis == 'xy':
             pass
+        elif self._axis == 'x':
+            for file_index in range(len(filelist)):
+                self._create_background()
+                for h in range(self._tiles['h']):
+                    for w in range(self._tiles['w']):
+                        i = h * self._tiles['w'] + w
+                        dir = keylist[i]
+                        input_path = self._get_input_abs_path(dir, folders[dir][file_index])
+                        print(input_path+' & ', end='')
+                        img = cv2.imread(input_path)
+                        w1, h1 = self._image_size['w'], self._image_size['h']
+                        dw1, dh1 = self._gap['dw'], self._gap['dh']
+                        self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
 
-    cv2.imshow('image', back)
-    cv2.imwrite(cfg['output'], back)
-    cv2.waitKey(0)
+                print('\033[1;32m->\033[0m')
+                output_path = self._get_output_abs_path('', filelist[file_index])
+                self.save_img(output_path, self._back)
+
+        elif self._axis == 'y':
+            for file_index in range(len(filelist)):
+                self._create_background()
+                for w in range(self._tiles['w']):
+                    for h in range(self._tiles['h']):
+                        i = w * self._tiles['h'] + h
+                        dir = keylist[i]
+                        input_path = self._get_input_abs_path(dir, folders[dir][file_index])
+                        print(input_path+' & ', end='')
+                        img = cv2.imread(input_path)
+                        w1, h1 = self._image_size['w'], self._image_size['h']
+                        dw1, dh1 = self._gap['dw'], self._gap['dh']
+                        self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
+
+                print('\033[1;32m->\033[0m')
+                output_path = self._get_output_abs_path('', filelist[file_index])
+                self.save_img(output_path, self._back)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = parse_args()
-    combine(None, None, args.ymlpath)
+    cfg = load_yml(args.ymlpath)
+    combine = Combination(cfg)
+    combine.handle()
+    combine.combine()

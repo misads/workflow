@@ -34,6 +34,8 @@ class Base(object):
 
             if 'compare_root' in meta:
                 self._compare_root = meta['compare_root']
+            else:
+                self._compare_root = None
 
             self.is_dir_input = os.path.isdir(self._input_root)
             if not os.path.exists(self._input_root):
@@ -88,7 +90,8 @@ class Base(object):
             compare_path = self._get_compare_abs_path(folder, imfile) if self._compare_root else None
             if compare_path and not os.path.exists(compare_path):
                 raise FileNotFoundError('compare file "%s" not found' % compare_path)
-            checkdir(os.path.join(self._output_root, folder))
+            if 'combination' not in self.cfg:
+                checkdir(os.path.join(self._output_root, folder))
             output_path = self._get_output_abs_path(folder, imfile)
         else:
             # only one image for input
@@ -112,6 +115,7 @@ class Base(object):
         abs_folder = self._get_input_abs_path(folder)
 
         lists = os.listdir(abs_folder)
+        lists.sort()
         for f in lists:
             full_path_f = os.path.join(abs_folder, f)
             if os.path.isdir(full_path_f):
@@ -119,6 +123,7 @@ class Base(object):
                     if self._folder_list and f not in self._folder_list:
                         continue
                     self.folders[os.path.join(folder, f)] = []
+
                     self._handle_folder(os.path.join(folder, f))
 
             else:
@@ -137,6 +142,8 @@ class Base(object):
             self._check_image('', self._input_root)
 
     def _log(self, input_path, output_path, compare_path=None):
+        if 'combination' in self.cfg:
+            return
         if compare_path:
             print('%d %s \033[1;33m&\033[0m %s \033[1;32m->\033[0m' % (self._i, input_path, compare_path))
         else:

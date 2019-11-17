@@ -109,8 +109,10 @@ cmp/
 trans/
 output/
 img_resize/
+combination/
 .DS_Store
 */.DS_Store
 .idea/
 mouse.py
 cut_rec.py
+aaa/

@@ -8,7 +8,7 @@ import numpy as np
 
 from base import Base
 from load_config import load_yml
-from misc_utils import checkdir, attach_file_suffix
+from misc_utils import attach_file_suffix
 
 
 def parse_args():
