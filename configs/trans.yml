@@ -7,26 +7,29 @@ _meta_:
     # save_format: '.jpg'
 
 resize:
-    w: 1400
-    h: 1400
+    w: 400
+    h: 400
+    # save: '_resize'
 
 crop:
-    mode: "random"  # random or fix
+    mode: "fix"  # random or fix
     times:
         10  # only works in random mode
     start_point:   # only works in fix mode
         left: 0
         top: 0
     size:
-        w: 400
-        h: 400
+        w: 200
+        h: 200
 flip:
-    vertical: False
-    horizontal: False
+    vertical: 'v'  # save suffix, empty for not saving
+    horizontal: 'h'
+    both: 'vh'
 
-rotate:
-    enable: False
-    angle: 90   # clockwise
+rotate:  # clockwise
+    90: '90'  # save suffix, empty for not saving
+    180: '180'
+    270: '270'
 
 
 

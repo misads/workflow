@@ -99,8 +99,8 @@ class Base(object):
             output_path = self._output_root
 
         # print('%d %s \033[1;33m->\033[0m %s' % (self._i, input_path, output_path))
-        self._handle_image(input_path, output_path, compare_path)
         self._log(input_path, output_path, compare_path)
+        self._handle_image(input_path, output_path, compare_path)
         self._i = self._i + 1
 
     # must be implemented in subclass
@@ -125,6 +125,10 @@ class Base(object):
 
                 self._check_image(folder, f)
 
+    def save_img(self, filename, img):
+        print('   ' + filename)
+        cv2.imwrite(filename, img)
+
     def handle(self):
         if self.is_dir_input:
             self.folders[''] = []
@@ -134,9 +138,9 @@ class Base(object):
 
     def _log(self, input_path, output_path, compare_path=None):
         if compare_path:
-            print('%d %s \033[1;33m&\033[0m %s \033[1;32m->\033[0m %s' % (self._i, input_path, compare_path, output_path))
+            print('%d %s \033[1;33m&\033[0m %s \033[1;32m->\033[0m' % (self._i, input_path, compare_path))
         else:
-            print('%d %s \033[1;32m->\033[0m %s' % (self._i, input_path, output_path))
+            print('%d %s \033[1;32m->\033[0m' % (self._i, input_path))
 
 
 class T(Base):

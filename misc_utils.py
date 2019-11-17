@@ -50,6 +50,8 @@ def is_file_image(filename):
 
 
 def attach_file_suffix(filename, suffix, ex=''):
+    if suffix:
+        suffix = '_' + suffix
     s = filename.split('.')
     ext = s[-1]
     if ex == '':

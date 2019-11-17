@@ -2,14 +2,15 @@
 　　batch scripts for some basic image operations (crop, affine transformation, tile, combination, comparison, etc.).
 
 
-#### Required Python Package
+### Required Python Packages
 
 ```
   opencv-python  
   PyYAML
+  numpy
 ```
 
-#### Usage
+### Usage
 
 1.put your image files in a structure like this:
 
@@ -41,7 +42,7 @@
 
 4. run `python transform.py configs/my_trans.yml`
 
-#### Operations & Config Template
+### Operations & Config Template
 
   Transformation
 
@@ -69,10 +70,12 @@ crop:
         w: 400
         h: 400
 flip:
-    vertical: False
-    horizontal: False
+    vertical: 'v'  # save suffix, empty for not saving
+    horizontal: 'h'
+    both: 'vh'
 
-rotate:
-    enable: False
-    angle: 90   # clockwise
+rotate:  # clockwise
+    90: '90'  # save suffix, empty for not saving
+    180: '180'
+    270: '270'
 ```
