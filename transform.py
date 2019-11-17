@@ -27,6 +27,11 @@ class Transform(Base):
 
     def _handle_image(self, input_path, output_path, compare_path=None):
         img = cv2.imread(input_path)
+        cfg = self.cfg
+        if 'resize' in cfg:
+            resize = cfg['resize']
+            w, h = resize['w'], resize['h']
+            img = cv2.resize(img, (w, h))
 
         cv2.imwrite(output_path, img)
 

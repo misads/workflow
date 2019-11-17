@@ -49,6 +49,17 @@ def is_file_image(filename):
     return True
 
 
+def attach_file_suffix(filename, suffix, ex=''):
+    s = filename.split('.')
+    ext = s[-1]
+    if ex == '':
+        ex = '.' + ext
+    name = filename[:-len(ext)-1]
+
+    return name + suffix + ex
+
+
+
 def annotate_all(dir, start_point, h, w, BGR, thickness=5):
     paths = os.listdir(dir)
     for filename in paths:

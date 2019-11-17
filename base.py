@@ -51,6 +51,12 @@ class Base(object):
                 self._folder_list = meta['folder_list']
             else:
                 self._folder_list = None
+
+            if 'save_format' in meta:
+                self.save_format = meta['save_format']
+            else:
+                self.save_format = None
+
         except KeyError:
             raise Exception('key missing in config file (*.yml)')
 
@@ -85,7 +91,7 @@ class Base(object):
             checkdir(os.path.join(self._output_root, folder))
             output_path = self._get_output_abs_path(folder, imfile)
         else:
-            # only 1 image for input
+            # only one image for input
             input_path = self._input_root
             compare_path = self._compare_root if self._compare_root else None
             if compare_path and not os.path.exists(compare_path):
@@ -97,7 +103,7 @@ class Base(object):
         self._log(input_path, output_path, compare_path)
         self._i = self._i + 1
 
-    # be implemented in subclass
+    # must be implemented in subclass
     @abstractmethod
     def _handle_image(self, input_path, output_path, compare_path=None):
         pass
@@ -131,6 +137,7 @@ class Base(object):
             print('%d %s \033[1;33m&\033[0m %s \033[1;32m->\033[0m %s' % (self._i, input_path, compare_path, output_path))
         else:
             print('%d %s \033[1;32m->\033[0m %s' % (self._i, input_path, output_path))
+
 
 class T(Base):
     def __init__(self, cfg):

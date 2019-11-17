@@ -4,10 +4,11 @@ _meta_:
     output_root: 'trans'
     recursively: True  # recursively folder detecting
     # folder_list: ["12", "4", "29", "94", "96"]  # if assigned, only selected folders will be handled
+    # save_format: '.jpg'
 
 resize:
-    w: 400
-    h: 400
+    w: 1400
+    h: 1400
 
 crop:
     mode: "random"  # random or fix
