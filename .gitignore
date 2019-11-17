@@ -102,3 +102,15 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+compare/
+binary/
+raw/
+cmp/
+trans/
+output/
+img_resize/
+.DS_Store
+*/.DS_Store
+.idea/
+mouse.py
+cut_rec.py

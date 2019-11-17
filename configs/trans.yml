@@ -1,0 +1,31 @@
+_meta_:
+    input_root: 'raw'
+    compare_root: ''
+    output_root: 'trans'
+    recursively: True  # recursively folder detecting
+    # folder_list: ["12", "4", "29", "94", "96"]  # if assigned, only selected folders will be handled
+
+resize:
+    w: 400
+    h: 400
+
+crop:
+    mode: "random"  # random or fix
+    times:
+        10  # only works in random mode
+    start_point:   # only works in fix mode
+        left: 0
+        top: 0
+    size:
+        w: 400
+        h: 400
+flip:
+    vertical: False
+    horizontal: False
+
+rotate:
+    enable: False
+    angle: 90   # clockwise
+
+
+

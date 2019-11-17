@@ -1,0 +1,53 @@
+_meta_:
+    input_root: ''  # input
+    output_root: ''
+
+crop:
+    w: 400
+    h: 400
+
+flip:
+    vertical: False
+    horizontal: False
+
+resize:
+    w: 400
+    h: 400
+
+rotate:
+    enable: False
+    angle: 90   # clockwise
+
+combination:
+    folder_path: "auto"  # auto or manual
+    folder: ['a', 'b', 'c', 'd']  # only works in manual mode
+    tiles:
+        w: 5  # num_a_row
+        h: 4  # rows(folders)
+    image_size:
+        w: 400
+        h: 337
+    gap:
+        dw: 15
+        dh: 15
+    input_dir: 'input'
+    output: 'combine.png'
+
+split:
+
+comparison_annotation:
+    folder_path: "manual"  # auto or manual
+    mode: "compare"  # compare or crop
+    folder: ["a", "b", "c", "d"]  # only works in manual mode
+    annotations: [1, 2, 1, 2]
+    color:
+        - ['green']
+        - ['green', 'wheat']
+        - ['red']
+        - ['red', 'green']
+    thickness: 5
+    input_dir: 'input'
+    output_folder: 'compare'
+
+
+

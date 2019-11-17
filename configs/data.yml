@@ -1,0 +1,31 @@
+combination:
+    folder_path: "auto"  # auto or manual
+    tiles:
+        w: 8  # num_a_row
+        h: 11  # rows(folders)
+    image_size:
+        w: 400
+        h: 337
+    gap:
+        dw: 15
+        dh: 15
+    input_dir: 'raw'
+    output: 'combine.png'
+split:
+
+comparison_annotation:
+    folder_path: "manual"  # auto or manual
+    mode: "crop"  # compare or crop
+    folder: ["12", "4", "29", "94", "96"]  # only works in manual mode
+    annotations: [2, 1, 1, 1, 1]
+    color:
+        - ['red', 'green']
+        - ['wheat']
+        - ['red']
+        - ['red']
+        - ['blue']
+    thickness: 5
+    input_dir: 'raw'
+    output_folder: 'compare'
+
+
