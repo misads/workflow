@@ -8,38 +8,67 @@
 
 
 workflow:
-    - op1:
-        __meta__:
-            input: 'val'
-            output: 'copy'
-            recursively: False  # recursively = True: include sub directory
-        split:
-            tiles:
-                w: 4
-                h: 4
+#    - op1:
+#        __meta__:
+#            input: 'input'
+#            output: 'output'
+#            recursively: True  # recursively = True: include sub directory
+#        transformation:
+#            - rotate:
+#                - 90:
+#                    save: '_90.png'
+#                - 180:
+#                    save: '_270.png'
 
     - op2:
-        __meta__:
-            input: 'copy'
-            output: 'combine'
-            recursively: True  # recursively = True: include sub directory
-        combine:
-            one_folder_in_axis: 'xy'
-            priority_axis: 'x'
-            tiles:
-                w: 4  # num_a_row
-                h: 4  # rows(folders)
-
-    - op3:
           __meta__:
-              input: 'cmp1'
-              compare: 'cmp2'
+              input: 'rotate/train'
+              compare: 'rotate/label'
 
           evaluate:
               - f1
               - f2
-              - psnr
               - ssim
+
+
+#                - 90:
+#                    save: '_270.png'
+
+
+#    - op1:
+#        __meta__:
+#            input: 'val'
+#            output: 'split'
+#            recursively: False  # recursively = True: include sub directory
+#        split:
+#            tiles:
+#                w: 2
+#                h: 2
+#
+#    - op2:
+#        __meta__:
+#            input: 'split'
+#            output: 'combine'
+#            recursively: True  # recursively = True: include sub directory
+#        combine:
+#            one_folder_in_axis: 'xy'
+#            priority_axis: 'x'
+#            tiles:
+#                w: 2  # num_a_row
+#                h: 2  # rows(folders)
+#
+#    - op3:
+#          __meta__:
+#              input: 'val'
+#              compare: 'combine'
+#
+#          evaluate:
+#              - f1
+#              - f2
+#              - ssim
+
+
+
 
 
 #        split:

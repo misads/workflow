@@ -4,7 +4,7 @@ Author: xuhaoyu@tju.edu.cn
 
 Usage: define a new class inherited from Base, then set self.mode in one of {'1_to_1', '1_to_n', 'n_to_1', 'n_to_0'}
     in `1_to_*` mode `_handle_image` function will be called for each image file by Base
-    in `n_to_1` mode `_handle_dict` function will be called once after parsing the directory
+    in `n_to_*` mode `_handle_dict` function will be called once after parsing the directory
 
 Example:
 
@@ -121,11 +121,13 @@ class Base(object):
                 checkdir(os.path.join(self._output_root, imfile))
                 output_path = self._get_output_abs_path(out_dir, imfile)
 
-            elif self.mode == 'n_to_1':
+            elif self.mode == 'n_to_n':
                 # do not handle image
                 checkdir(os.path.join(self._output_root, folder))
                 return
-            else:  # n_to_0 or default
+            elif self.mode == 'n_to_1':
+                return
+            else:  # 2_to_0 or default
                 output_path = None
                 abs_out_dir = None
 
@@ -148,8 +150,8 @@ class Base(object):
         pass
 
     def _handle_dict(self, dir_dict, len_x, len_y):
-        if self.mode == 'n_to_1':
-            raise NotImplementedError('must be implemented in n_to_1 mode')
+        if 'n_to_' in self.mode:
+            raise NotImplementedError('must be implemented in n_to_* mode')
 
     def _handle_folder(self, folder):
         abs_folder = self._get_input_abs_path(folder)
@@ -180,7 +182,7 @@ class Base(object):
         if self.is_dir_input:
             self.folders[''] = []
             self._handle_folder('')
-            if self.mode == 'n_to_1':
+            if 'n_to_' in self.mode:
                 keys = [i for i in self.folders]
                 # ignore empty folders
                 for k in keys:
@@ -201,7 +203,7 @@ class Base(object):
             self._check_image('', self._input_root)
 
     def _log(self, input_path, output_path, compare_path=None):
-        if self.mode == 'n_to_1':
+        if 'n_to_' in self.mode:
             return
         if compare_path:
             print('%d %s \033[1;33m&\033[0m %s \033[1;32m->\033[0m' % (self._i, input_path, compare_path))

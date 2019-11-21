@@ -39,7 +39,7 @@ class Split(Base):
             for i in range(w):
                 img2 = img[j * h1:j * h1 + h1, i * w1:i * w1 + w1]  # (y1,y2):(x1,x2)
 
-                save_path = attach_file_suffix(output_path, '%d_%d' % (j, i))
+                save_path = attach_file_suffix(output_path, '_%02d_%02d' % (j, i))
                 print(save_path)
 
                 cv2.imwrite(save_path, img2)

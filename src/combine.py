@@ -78,9 +78,12 @@ class Combination(Base):
                     self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
 
             print('\033[1;32m->\033[0m')
-            checkdir(os.path.join(self._output_root, f))
             savename = f if '.' in f else f + '.png'
-            output_path = self._get_output_abs_path(f, savename)
+            if self.mode == 'n_to_n':
+                checkdir(os.path.join(self._output_root, f))
+                output_path = self._get_output_abs_path(f, savename)
+            else:
+                output_path = self._get_output_abs_path('', savename)
             self.save_img(output_path, self._back)
 
     def _handle_dict(self, dir_dict, len_x, len_y):
