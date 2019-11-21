@@ -4,13 +4,13 @@ import argparse
 
 from src.load_config import load_yml
 from src.transform import transform
-from src.crop import crop
+from src.split import split
 from src.combine import combine
 from src.evaluate import evaluate
 
 # operations dictionary, map strings to functions
 ops_dict = {'transformation': transform,
-            'crop': crop,
+            'split': split,
             'combine': combine,
             'evaluate': evaluate
             }
@@ -47,7 +47,7 @@ def workflow(cfg):
                 op_func(job)
 
         if not op:
-            print('Warning, no known operation found in %s' % list(jobname.keys())[0])
+            print('Warning: no known operation found in %s' % list(jobname.keys())[0])
 
 
 if __name__ == '__main__':

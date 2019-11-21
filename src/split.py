@@ -21,17 +21,14 @@ def parse_args():
     return args
 
 
-class Crop(Base):
+class Split(Base):
     def __init__(self, cfg):
         Base.__init__(self, cfg)
-        crop = self.cfg['crop']
-        self._tiles = crop['tiles']
+        self.mode = '1_to_n'  # want all splits in one folder? try setting mode to `1_to_1`
+        split = self.cfg['split']
+        self._tiles = split['tiles']
 
-    # 给的时候可以都给 各取所需
-    def _handle_image(self, input_path, output_path, compare_path=None, input_folder=None, filename=None):
-        pass
-
-    def _handle_image(self, input_path, output_path, compare_path=None):
+    def _handle_image(self, input_path, output_path, compare_path=None, abs_out_dir=None, filename=None):
         img = cv2.imread(input_path)
         height, width, _ = img.shape
         h, w = self._tiles['h'], self._tiles['w']
@@ -48,12 +45,12 @@ class Crop(Base):
                 cv2.imwrite(save_path, img2)
 
 
-def crop(cfg):
-    crop = Crop(cfg)
-    crop.handle()
+def split(cfg):
+    split = Split(cfg)
+    split.handle()
 
 
 if __name__ == '__main__':
     args = parse_args()
     cfg = load_yml(args.ymlpath)
-    crop(cfg)
+    split(cfg)

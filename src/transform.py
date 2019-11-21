@@ -53,7 +53,7 @@ class Transform(Base):
 
         img = cv2.imread(input_path)
         transformation = self.cfg['transformation']
-        save = True
+        changed = False
         for trans in transformation:
 
             if 'copy' in trans:
@@ -61,105 +61,69 @@ class Transform(Base):
                 if check_dict_or_str(trans, 'copy'):
                     self.save_img(save_path, img)
 
-                save = False
-
-                '''
-                if type(trans) == dict:
-                    copy = trans['copy']
-                    if 'save' in copy:
-                        suffix = copy['save']
-                        save_path = attach_file_suffix(output_path, suffix)
-                '''
-
+                changed = False
 
             if 'resize' in trans:
                 resize = trans['resize']
                 w, h = resize['w'], resize['h']
                 img = cv2.resize(img, (w, h))
-                if 'save' in resize:
-                    suffix = resize['save']
-                    save_path = attach_file_suffix(output_path, suffix)
-                    self.save_img(save_path, img)
-                    save = False
+                changed = save_middle(resize)
 
-            if 'crop' in trans:
-                crop = trans['crop']
-                mode = crop['mode']
+            if 'random_crop' in trans:
+                crop = trans['random_crop']
                 size = crop['size']
                 w, h = size['w'], size['h']
-                if mode == 'random':
-                    times = crop['times']
-                    for i in range(times + 1):
-                        patch = self._random_crop(img, w, h)
-                        output_suffux_path = attach_file_suffix(output_path, str(i + 1))
-                        print('   %s \033[1;32m->\033[0m %s' % (input_path, output_suffux_path))
-                        self.save_img(output_suffux_path, patch)
+                patchs = crop['patchs']
+                for i in range(patchs + 1):
+                    patch = self._random_crop(img, w, h)
+                    output_suffux_path = attach_file_suffix(output_path, str(i + 1))
+                    print('   %s \033[1;32m->\033[0m %s' % (input_path, output_suffux_path))
+                    self.save_img(output_suffux_path, patch)
 
-                    save = False
-                else:
-                    start_point = crop['start_point']
-                    x, y = start_point['left'], start_point['top']
-                    img = img[y:y + h, x:x + w]
+                changed = False
+
+            if 'fix_crop' in trans:
+                crop = trans['fix_crop']
+                size = crop['size']
+                w, h = size['w'], size['h']
+                start_point = crop['from']
+                x, y = start_point['left'], start_point['top']
+                img = img[y:y + h, x:x + w]
+                changed = save_middle(crop)
 
             if 'flip' in trans:
-                flip = trans['flip']
-                if 'vertical' in flip:
-                    v = flip['vertical']
-                    if v:
-                        img2 = cv2.flip(img, 0)
-                        self.save_img(attach_file_suffix(output_path, v), img2)
-                        save = False
-                    else:
+                flips = trans['flip']
+                for flip in flips:
+                    if 'vertical' in flip:
                         img = cv2.flip(img, 0)
+                        changed = check_dict_or_str(flip, 'vertical')
 
-                if 'horizontal' in flip:
-                    h = flip['horizontal']
-                    if h:
-                        img2 = cv2.flip(img, 1)
-                        self.save_img(attach_file_suffix(output_path, h), img2)
-                        save = False
-                    else:
+                    if 'horizontal' in flip:
                         img = cv2.flip(img, 1)
+                        changed = check_dict_or_str(flip, 'horizontal')
 
-                if 'both' in flip:
-                    b = flip['both']
-                    if b:
-                        img2 = cv2.flip(img, -1)
-                        self.save_img(attach_file_suffix(output_path, b), img2)
-                        save = False
-                    else:
+                    if 'both' in flip:
                         img = cv2.flip(img, -1)
+                        changed = check_dict_or_str(flip, 'both')
 
             if 'rotate' in trans:
-                rotate = trans['rotate']
-                if 90 in rotate:
-                    _90 = rotate[90]
-                    if _90:
-                        img2 = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-                        self.save_img(attach_file_suffix(output_path, _90), img2)
-                        save = False
-                    else:
+                rotates = trans['rotate']
+                for rotate in rotates:
+                    if type(rotate) == int:
+                        rotate = [rotate]
+                    if 90 in rotate:
                         img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
+                        changed = check_dict_or_str(rotate, 90)
 
-                if 270 in rotate:
-                    _270 = rotate[270]
-                    if _90:
-                        img2 = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
-                        self.save_img(attach_file_suffix(output_path, _270), img2)
-                        save = False
-                    else:
+                    if 270 in rotate:
                         img = cv2.rotate(img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+                        changed = check_dict_or_str(rotate, 270)
 
-                if 180 in rotate:
-                    _180 = rotate[180]
-                    if _180:
-                        img2 = cv2.rotate(img, cv2.ROTATE_180)
-                        self.save_img(attach_file_suffix(output_path, _180), img2)
-                        save = False
-                    else:
+                    if 180 in rotate:
                         img = cv2.rotate(img, cv2.ROTATE_180)
+                        changed = check_dict_or_str(rotate, 180)
 
-        if save:
+        if changed:
             self.save_img(output_path, img)
 
 

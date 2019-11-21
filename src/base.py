@@ -59,6 +59,7 @@ class Base(object):
             if not os.path.exists(self._input_root):
                 raise FileNotFoundError('input directory "%s" not found' % self._input_root)
             if self.is_dir_input and self._output_root:
+                # check root
                 checkdir(self._output_root)
 
             if self._compare_root and not os.path.exists(self._compare_root):
@@ -111,6 +112,7 @@ class Base(object):
             '''
             if self.mode == '1_to_1':
                 output_path = self._get_output_abs_path(folder, imfile)
+                checkdir(os.path.join(self._output_root, folder))
                 out_dir = folder
                 abs_out_dir = os.path.join(self._output_root, out_dir)
             elif self.mode == '1_to_n':
@@ -187,6 +189,13 @@ class Base(object):
                 keys = [i for i in self.folders]
                 len_x = len(self.folders)
                 len_y = len(self.folders[keys[0]]) if keys else 0
+
+                # call _handle_image once
+                dir1 = list(self.folders.keys())[0]
+                imgpath = (self.folders[dir1][0])
+                img_abs_path = self._get_input_abs_path(dir1, imgpath)
+                self._handle_image(img_abs_path, None)
+
                 self._handle_dict(self.folders, len_x, len_y)
         else:
             self._check_image('', self._input_root)

@@ -8,7 +8,7 @@ import numpy as np
 
 from src.base import Base
 from src.load_config import load_yml
-from src.misc_utils import checkdir, attach_file_suffix
+from src.misc_utils import checkdir, attach_file_suffix, safe_key
 
 
 def parse_args():
@@ -24,19 +24,15 @@ def parse_args():
 class Combination(Base):
     def __init__(self, cfg):
         Base.__init__(self, cfg)
-        self._combination = self.cfg['combination']
-        self._axis = self._combination['axis']
-        if 'one_folder_axis' in self._combination:
-            self._one_folder_axis = self._combination['one_folder_axis']
-        else:
-            self._one_folder_axis = None
+        self.mode = 'n_to_1'
+
+        self._combination = self.cfg['combine']
+        self._axis = self._combination['priority_axis']
+        self._one_folder_axis = safe_key(self._combination, 'one_folder_in_axis')
 
         self._tiles = self._combination['tiles']
 
-        if 'gap' in self._combination:
-            self._gap = self._combination['gap']
-        else:
-            self._gap = {'dw': 0, 'dh': 0}
+        self._gap = safe_key(self._combination, 'gap', {'dw': 0, 'dh': 0})
 
         if 'image_size' in self._combination:
             self._image_size = self._combination['image_size']
@@ -53,17 +49,13 @@ class Combination(Base):
 
         self._back = np.ones((height, width, 3), np.uint8) * 255  # white background
 
-    def _handle_image(self, input_path, output_path, compare_path=None):
-        if not self._image_size:
-            img = cv2.imread(input_path)
-            h, w, _ = img.shape
-            self._image_size = {'w': w, 'h': h}
-            self._create_background()
+    def _handle_image(self, input_path, output_path, compare_path=None, abs_out_dir=None, filename=None):
+        img = cv2.imread(input_path)
+        h, w, _ = img.shape
+        self._image_size = {'w': w, 'h': h}
+        self._create_background()
 
-        if self._back is None:
-            self._create_background()
-
-    def combine_xy(self):
+    def combine_on_folder_in_xy(self):
         for f in self.folders:
             dir = self.folders[f]
             if not dir:
@@ -87,15 +79,16 @@ class Combination(Base):
 
             print('\033[1;32m->\033[0m')
             checkdir(os.path.join(self._output_root, f))
-            output_path = self._get_output_abs_path(f, 'combine.png')
+            savename = f if '.' in f else f + '.png'
+            output_path = self._get_output_abs_path(f, savename)
             self.save_img(output_path, self._back)
 
-    def combine(self):
+    def _handle_dict(self, dir_dict, len_x, len_y):
         if self._one_folder_axis == 'xy':
-            self.combine_xy()
+            self.combine_on_folder_in_xy()
 
             return
-        folders = self.folders
+        folders = dir_dict
         keylist = []
         for f in folders:
             if f:
@@ -144,7 +137,6 @@ class Combination(Base):
 def combine(cfg):
     combine = Combination(cfg)
     combine.handle()
-    combine.combine()
 
 
 if __name__ == '__main__':
