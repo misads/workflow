@@ -1,7 +1,67 @@
 import os
+import pdb
 from shutil import copyfile
 import cv2
 import numpy as np
+
+
+def binaryzation(img, thresh=128, max=255):
+    grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    grey[grey < thresh] = 0
+    grey[grey >= thresh] = max
+    return grey
+
+
+def numeric_score(prediction, groundtruth):
+    """Computes scores:
+    FP = False Positives
+    FN = False Negatives
+    TP = True Positives
+    TN = True Negatives
+    return: FP, FN, TP, TN"""
+
+    FP = np.float(np.sum((prediction == 0) & (groundtruth == 1)))
+    FN = np.float(np.sum((prediction == 1) & (groundtruth == 0)))
+    TP = np.float(np.sum((prediction == 0) & (groundtruth == 0)))
+    TN = np.float(np.sum((prediction == 1) & (groundtruth == 1)))
+
+    return FP, FN, TP, TN
+
+
+def f_score(prediction, groundtruth, beta=1.0):
+
+    FP, FN, TP, TN = numeric_score(prediction, groundtruth)
+    # pdb.set_trace()
+    Precision = np.divide(TP, TP + FP)
+    Recall = np.divide(TP, TP + FN)
+    f = np.divide((1 + beta ** 2) * Precision * Recall, beta ** 2 * Precision + Recall)
+    return f * 100.0
+
+
+# precision and recall share the same importance
+def f1(prediction, groundtruth):
+    return f_score(prediction, groundtruth, beta=1.0)
+
+
+# recall is more important
+def f2(prediction, groundtruth):
+    return f_score(prediction, groundtruth, beta=2.0)
+
+
+def accuracy_score(prediction, groundtruth):
+    """Getting the accuracy of the model"""
+
+    FP, FN, TP, TN = numeric_score(prediction, groundtruth)
+    N = FP + FN + TP + TN
+    accuracy = np.divide(TP + TN, N)
+    return accuracy * 100.0
+
+
+def safe_key(dic, key, default=None):
+    if key in dic:
+        return dic[key]
+    else:
+        return default
 
 
 def abstractmethod(func):
@@ -50,16 +110,20 @@ def is_file_image(filename):
 
 
 def attach_file_suffix(filename, suffix, ex=''):
-    if suffix:
-        suffix = '_' + suffix
+    # if suffix and suffix[0] != '_':
+    #     suffix = '_' + suffix
     s = filename.split('.')
     ext = s[-1]
     if ex == '':
         ex = '.' + ext
-    name = filename[:-len(ext)-1]
+    name = filename[:-len(ext) - 1]
+
+    if suffix and '.' in suffix:
+        sf = suffix.split('.')
+        ex = sf[1]
+        return name + suffix
 
     return name + suffix + ex
-
 
 
 def annotate_all(dir, start_point, h, w, BGR, thickness=5):

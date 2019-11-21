@@ -1,0 +1,104 @@
+#_meta_:
+#    input_root: 'raw'
+#    compare_root: ''
+#    output_root: 'trans'
+#    recursively: True  # recursively folder detecting
+#    # folder_list: ["12", "4", "29", "94", "96"]  # if assigned, only selected folders will be handled
+#    # save_format: '.jpg'
+
+
+workflow:
+    - op1:
+        __meta__:
+            input: 'val'
+            output: 'copy'
+
+        transformation:
+            - copy:
+                save: '.tiff'
+#            - resize:
+#                w: 200
+#                h: 200
+#                save: '_resize.tiff'
+    - op2:
+          __meta__:
+              input: 'cmp1'
+              compare: 'cmp2'
+
+          evaluate:
+              - f1
+              - f2
+              - psnr
+              - ssim
+
+
+#    - op2:
+#        __meta__:
+#            input: 'raw'
+#            output: 'resize'
+#        tranformation:
+#            - binary:
+#                thresh: 200
+#            - copy:
+#                save: ''
+#            - resize:
+#                w: 400
+#                h: 400
+#                save: '_resize2.jpg'
+#
+#            - fix_crop:
+#                from:
+#                    left: 0
+#                    top: 0
+#                size:
+#                   w: 200
+#                   h: 200
+#
+#            - random_crop:
+#                patchs: 20
+#                size:
+#                    w: 200
+#                    h: 200
+#                save: '%index'
+#
+#            - flip:
+#                - vertical:
+#                    save: 'v'  # 保存就在tmp操作
+#                - horizontal  # 不保存就在原图操作
+#                - vertical_horizontal
+#            - rotate:
+#                - 90
+#                - 180
+#                - 270:
+#                    save: '270'
+
+
+
+
+#
+#resize:
+#    w: 400
+#    h: 400
+#    # save: '_resize'
+#
+#crop:
+#    mode: "fix"  # random or fix
+#    times:
+#        10  # only works in random mode
+#    start_point:   # only works in fix mode
+#        left: 0
+#        top: 0
+#    size:
+#        w: 200
+#        h: 200
+#flip:
+#    vertical: 'v'  # save suffix, empty for not saving
+#    horizontal: 'h'
+#    both: 'vh'
+#
+#rotate:  # clockwise
+#    90: '90'  # save suffix, empty for not saving
+#    180: '180'
+#    270: '270'
+#
+

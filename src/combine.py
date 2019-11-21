@@ -6,9 +6,9 @@ import argparse
 import cv2
 import numpy as np
 
-from base import Base
-from load_config import load_yml
-from misc_utils import checkdir, attach_file_suffix
+from src.base import Base
+from src.load_config import load_yml
+from src.misc_utils import checkdir, attach_file_suffix
 
 
 def parse_args():
@@ -26,11 +26,8 @@ class Combination(Base):
         Base.__init__(self, cfg)
         self._combination = self.cfg['combination']
         self._axis = self._combination['axis']
-        if 'one_folder_axis' in self._axis:
-            if self._axis == 'xy':
-                self._one_folder_axis = self._axis['one_folder_axis']
-            else:
-                self._one_folder_axis = None
+        if 'one_folder_axis' in self._combination:
+            self._one_folder_axis = self._combination['one_folder_axis']
         else:
             self._one_folder_axis = None
 
@@ -66,12 +63,43 @@ class Combination(Base):
         if self._back is None:
             self._create_background()
 
+    def combine_xy(self):
+        for f in self.folders:
+            dir = self.folders[f]
+            if not dir:
+                continue
+            dir.sort()
+            self._create_background()
+
+            for w in range(self._tiles['w']):
+                for h in range(self._tiles['h']):
+                    if self._axis == 'x':
+                        i = h * self._tiles['w'] + w
+                    else:
+                        i = w * self._tiles['h'] + h
+                    # dir = keylist[i]
+                    input_path = self._get_input_abs_path(f, dir[i])
+                    print(input_path + ' & ', end='')
+                    img = cv2.imread(input_path)
+                    w1, h1 = self._image_size['w'], self._image_size['h']
+                    dw1, dh1 = self._gap['dw'], self._gap['dh']
+                    self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
+
+            print('\033[1;32m->\033[0m')
+            checkdir(os.path.join(self._output_root, f))
+            output_path = self._get_output_abs_path(f, 'combine.png')
+            self.save_img(output_path, self._back)
+
     def combine(self):
+        if self._one_folder_axis == 'xy':
+            self.combine_xy()
+
+            return
         folders = self.folders
         keylist = []
         for f in folders:
             if f:
-               keylist.append(f)
+                keylist.append(f)
         filelist = folders[keylist[0]]
 
         if self._axis == 'xy':
@@ -84,7 +112,7 @@ class Combination(Base):
                         i = h * self._tiles['w'] + w
                         dir = keylist[i]
                         input_path = self._get_input_abs_path(dir, folders[dir][file_index])
-                        print(input_path+' & ', end='')
+                        print(input_path + ' & ', end='')
                         img = cv2.imread(input_path)
                         w1, h1 = self._image_size['w'], self._image_size['h']
                         dw1, dh1 = self._gap['dw'], self._gap['dh']
@@ -102,7 +130,7 @@ class Combination(Base):
                         i = w * self._tiles['h'] + h
                         dir = keylist[i]
                         input_path = self._get_input_abs_path(dir, folders[dir][file_index])
-                        print(input_path+' & ', end='')
+                        print(input_path + ' & ', end='')
                         img = cv2.imread(input_path)
                         w1, h1 = self._image_size['w'], self._image_size['h']
                         dw1, dh1 = self._gap['dw'], self._gap['dh']
@@ -113,9 +141,13 @@ class Combination(Base):
                 self.save_img(output_path, self._back)
 
 
-if __name__ == '__main__':
-    args = parse_args()
-    cfg = load_yml(args.ymlpath)
+def combine(cfg):
     combine = Combination(cfg)
     combine.handle()
     combine.combine()
+
+
+if __name__ == '__main__':
+    args = parse_args()
+    cfg = load_yml(args.ymlpath)
+    combine(cfg)

@@ -2,10 +2,9 @@ import argparse
 import os
 
 import cv2
-from cut_rec import cut_image
-from combine import combine
-from load_config import load_yml
-from misc_utils import checkdir, copydir, annotate_all, save_crop
+from src.combine import combine
+from src.load_config import load_yml
+from src.misc_utils import checkdir, copydir, annotate_all, save_crop
 
 global cfg
 # print(cfg)
