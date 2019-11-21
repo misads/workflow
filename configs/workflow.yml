@@ -1,4 +1,4 @@
-#_meta_:
+#__meta__:
 #    input_root: 'raw'
 #    compare_root: ''
 #    output_root: 'trans'
@@ -8,6 +8,38 @@
 
 
 workflow:
+    - op1:
+        __meta__:
+            input: 'val'
+            output: 'split'
+            recursively: False  # recursively = True: include sub directory
+        split:
+            tiles:
+                w: 2
+                h: 2
+
+    - op2:
+        __meta__:
+            input: 'split'
+            output: 'combine'
+            recursively: True  # recursively = True: include sub directory
+        combine:
+            one_folder_in_axis: 'xy'
+            priority_axis: 'x'
+            tiles:
+                w: 2  # num_a_row
+                h: 2  # rows(folders)
+
+    - op3:
+          __meta__:
+              input: 'val'
+              compare: 'combine'
+
+          evaluate:
+              - f1
+              - f2
+              - ssim
+
 #    - op1:
 #        __meta__:
 #            input: 'input'
@@ -19,56 +51,6 @@ workflow:
 #                    save: '_90.png'
 #                - 180:
 #                    save: '_270.png'
-
-    - op2:
-          __meta__:
-              input: 'rotate/train'
-              compare: 'rotate/label'
-
-          evaluate:
-              - f1
-              - f2
-              - ssim
-
-
-#                - 90:
-#                    save: '_270.png'
-
-
-#    - op1:
-#        __meta__:
-#            input: 'val'
-#            output: 'split'
-#            recursively: False  # recursively = True: include sub directory
-#        split:
-#            tiles:
-#                w: 2
-#                h: 2
-#
-#    - op2:
-#        __meta__:
-#            input: 'split'
-#            output: 'combine'
-#            recursively: True  # recursively = True: include sub directory
-#        combine:
-#            one_folder_in_axis: 'xy'
-#            priority_axis: 'x'
-#            tiles:
-#                w: 2  # num_a_row
-#                h: 2  # rows(folders)
-#
-#    - op3:
-#          __meta__:
-#              input: 'val'
-#              compare: 'combine'
-#
-#          evaluate:
-#              - f1
-#              - f2
-#              - ssim
-
-
-
 
 
 #        split:
