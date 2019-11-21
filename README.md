@@ -1,6 +1,11 @@
 ## img_workflow
-　　Batch scripts for several simple image operations (crop, affine transformation, tile, combination, comparison, etc.).
+　　Configurable batch script for several simple image operations (crop, affine transformation, split, combination, comparison, etc.).
 
+### Result Preview
+
+　　With this workflow script, image operations can be automatically performed following the guidence of which be configured in `*.yml` file, as in a example:
+
+![result](http://www.xyu.ink/wp-content/uploads/2019/11/workflow.png)
 
 ### Required Python Packages
 
@@ -11,7 +16,7 @@
   scikit-image (for evaluation metrics)
 ```
 
-### Usage
+### Quick Start
 
 1. Put your image files in a structure like this:
 
@@ -34,7 +39,7 @@
 
 2. Copy config template in 'configs' directory (e.g. configs/workflow.yml) to configs/my_workflow.yml (leave the original as a backup).
 
-3. Modify configs/my_trans.yml as you need. Be aware that 'input_root', 'compare_root', 'output_root' fields should be set to corresponding directory path.
+3. Modify configs/my_workflow.yml as you need. Beware that `input`, `compare`, `output` fields should be set to corresponding directory path.
 ```yaml
     input: 'raw'
     compare: 'compare'
@@ -82,7 +87,7 @@ workflow:
               - ssim
 ```
 
-　　The runing result snapshot is as belows:
+　　The runing result snapshot is shown in the preceding *result preview* part.
 
-![result](http://www.xyu.ink/wp-content/uploads/2019/11/workflow.png)
+
 
