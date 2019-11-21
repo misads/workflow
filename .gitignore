@@ -112,6 +112,7 @@ img_resize/
 combination/
 .DS_Store
 */.DS_Store
+configs/.DS_Store
 .idea/
 mouse.py
 cut_rec.py
