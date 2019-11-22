@@ -1,13 +1,13 @@
 ## img_workflow
 　　Configurable batch script for several simple image operations (crop, affine transformation, split, combination, comparison, etc.).
 
-### Result Preview
+### What Can it Do?
 
-　　With this workflow script, image operations can be automatically performed following the guidence of which be configured in `*.yml` file, as in a example:
+　　With this workflow script, image operations can be easily & automatically performed following the guidence of which be configured in a `*.yml` file, an example is as below:
 
 ![result](http://www.xyu.ink/wp-content/uploads/2019/11/workflow.png)
 
-### Required Python Packages
+### Requirements
 
 ```
   opencv-python  
@@ -37,7 +37,7 @@
 └─── result
 ```
 
-2. Copy config template in 'configs' directory (e.g. configs/workflow.yml) to configs/my_workflow.yml (leave the original as a backup).
+2. Copy a config template in 'configs' directory (e.g. `configs/workflow.yml`) to `configs/my_workflow.yml` (leave the original as a backup).
 
 3. Modify configs/my_workflow.yml as you need. Beware that `input`, `compare`, `output` fields should be set to corresponding directory path.
 ```yaml
@@ -87,7 +87,7 @@ workflow:
               - ssim
 ```
 
-　　The runing result snapshot is shown in the preceding *result preview* part.
+　　The runing result snapshot is shown in the preceding *preview* part.
 
 
 
