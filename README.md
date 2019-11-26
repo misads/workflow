@@ -1,9 +1,9 @@
 ## img_workflow
-　　Configurable batch script for several simple image operations (crop, affine transformation, split, combination, comparison, etc.).
+　　A configurable batch script for several simple image operations (crop, affine transformation, split, combination, comparison, etc.).
 
 ### What Can it Do?
 
-　　With this workflow script, image operations can be easily & automatically performed following the guidence of which be configured in a `*.yml` file, an example is as below:
+　　With this workflow script, image operations can be easily & automatically performed following the guidance of which has been configured in a `*.yml` file, an example is as below:
 
 ![result](http://www.xyu.ink/wp-content/uploads/2019/11/workflow.png)
 
@@ -37,9 +37,9 @@
 └─── result
 ```
 
-2. Copy a config template in 'configs' directory (e.g. `configs/workflow.yml`) to `configs/my_workflow.yml` (leave the original as a backup).
+2. Copy one of the configure templates in 'configs' directory (e.g. `configs/workflow.yml`) to `configs/my_workflow.yml` (leaving the original as a backup).
 
-3. Modify `configs/my_workflow.yml` as you need. Beware that `input`, `compare`, `output` fields should be set to corresponding directory path.
+3. Modify `configs/my_workflow.yml` as you need. Beware that `input`, `compare`, `output` fields should be set to corresponding directory paths.
 ```yaml
     input: 'raw'
     compare: 'compare'
@@ -50,7 +50,7 @@
 
 ### Yml File Example
 
-　　The following example shows the config file to **split** images in folder `val` into 2 × 2 tiles (save in `split` folder) and then **combine** them back (save in `combine` folder). Afterwards, we will check if the inputs and combined results are the same. (by *ssim*)
+　　The following example shows the configure file to **split** images in folder `val` into 2 × 2 tiles (saved in `split` folder) and then **combine** them back (saved in `combine` folder). Afterwards, our `op3` will check if the inputs and combined results are exactly the same. (by *ssim*)
 
 ```yaml
 workflow:
@@ -87,7 +87,7 @@ workflow:
               - ssim
 ```
 
-　　The runing result snapshot is shown in preceding *What Can it Do* part.
+　　The running result snapshot is shown in preceding *What Can it Do* part.
 
 
 
