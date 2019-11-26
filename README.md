@@ -3,9 +3,11 @@
 
 ### What Can it Do?
 
-　　With this workflow script, image operations can be easily & automatically performed following the guidance of which has been configured in a `*.yml` file, an example is as below:
+　　With this workflow script, image operations can be easily & automatically performed following the guidance of which has been configured in a `*.yml` file, an example is as below:  
 
 ![result](http://www.xyu.ink/wp-content/uploads/2019/11/workflow.png)
+
+　　(op1: **split** images; op2: **combine** them back; op3: **evaluate** their similarity)
 
 ### Requirements
 
