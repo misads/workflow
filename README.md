@@ -39,7 +39,7 @@
 
 2. Copy a config template in 'configs' directory (e.g. `configs/workflow.yml`) to `configs/my_workflow.yml` (leave the original as a backup).
 
-3. Modify configs/my_workflow.yml as you need. Beware that `input`, `compare`, `output` fields should be set to corresponding directory path.
+3. Modify `configs/my_workflow.yml` as you need. Beware that `input`, `compare`, `output` fields should be set to corresponding directory path.
 ```yaml
     input: 'raw'
     compare: 'compare'
@@ -87,7 +87,7 @@ workflow:
               - ssim
 ```
 
-　　The runing result snapshot is shown in the preceding *preview* part.
+　　The runing result snapshot is shown in preceding *What Can it Do* part.
 
 
 

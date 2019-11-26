@@ -8,17 +8,7 @@ import numpy as np
 
 from src.base import Base
 from src.load_config import load_yml
-from src.misc_utils import checkdir, attach_file_suffix, safe_key
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description='resize images.')
-
-    parser.add_argument('ymlpath')
-
-    args = parser.parse_args()
-
-    return args
+from src.misc_utils import checkdir, attach_file_suffix, safe_key, args
 
 
 class Combination(Base):
@@ -143,6 +133,5 @@ def combine(cfg):
 
 
 if __name__ == '__main__':
-    args = parse_args()
     cfg = load_yml(args.ymlpath)
     combine(cfg)

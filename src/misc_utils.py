@@ -1,3 +1,4 @@
+import argparse
 import os
 import pdb
 from shutil import copyfile
@@ -5,11 +6,34 @@ import cv2
 import numpy as np
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='usage: python [filename].py configs/[config].yml')
+    parser.add_argument('ymlpath')
+    parser.add_argument('--mode', dest='mode',
+                        help='set to `default` or `{x}_to_{y}`. x: num of images handled once, y: if n, a folder ' +
+                             'will be created for each input image.',
+                        choices=['default', '1_to_1', '1_to_n', 'n_to_1', '2_to_0', 'n_to_0'], default='default')
+
+    args = parser.parse_args()
+    return args
+
+
+args = parse_args()
+
+
 def binaryzation(img, thresh=128, max=255):
     grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     grey[grey < thresh] = 0
     grey[grey >= thresh] = max
     return grey
+
+
+def random_crop(img, w, h):
+    height, width, _ = img.shape
+    x = np.random.randint(0, width - w)
+    y = np.random.randint(0, height - h)
+    patch = img[y:y + h, x:x + w]
+    return patch
 
 
 def numeric_score(prediction, groundtruth):
@@ -75,7 +99,7 @@ def abstractmethod(func):
 
 def checkdir(dir):
     if not os.path.isdir(dir):
-        os.mkdir(dir)
+        os.makedirs(dir)
 
 
 def copydir(dir1, dir2):

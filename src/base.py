@@ -19,21 +19,11 @@ class Transform(Base):
 
 """
 
-import argparse
 import os
 import cv2
 
 from src.load_config import load_yml
-from src.misc_utils import checkdir, is_file_image, abstractmethod, safe_key
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description='usage: python [filename].py configs/[config].yml')
-    parser.add_argument('ymlpath')
-
-    args = parser.parse_args()
-
-    return args
+from src.misc_utils import checkdir, is_file_image, abstractmethod, safe_key, args
 
 
 class Base(object):
@@ -102,13 +92,7 @@ class Base(object):
                 raise FileNotFoundError('compare file "%s" not found' % compare_path)
 
             '''
-            if 'combination' not in self.cfg:
-                checkdir(os.path.join(self._output_root, folder))
-            if 'crop' in self.cfg:
-                checkdir(os.path.join(self._output_root, imfile))
-                output_path = self._get_output_abs_path(imfile, imfile)
-            else:
-                output_path = self._get_output_abs_path(folder, imfile)
+                handle different modes
             '''
             if self.mode == '1_to_1':
                 output_path = self._get_output_abs_path(folder, imfile)
@@ -118,7 +102,7 @@ class Base(object):
             elif self.mode == '1_to_n':
                 out_dir = os.path.join(folder, imfile)
                 abs_out_dir = os.path.join(self._output_root, out_dir)
-                checkdir(os.path.join(self._output_root, imfile))
+                checkdir(os.path.join(self._output_root, folder, imfile))
                 output_path = self._get_output_abs_path(out_dir, imfile)
 
             elif self.mode == 'n_to_n':
@@ -236,7 +220,6 @@ def test(cfg):
 
 
 if __name__ == '__main__':
-    args = parse_args()
     cfg = load_yml(args.ymlpath)
 
     test(cfg)

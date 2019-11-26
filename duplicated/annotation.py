@@ -2,7 +2,7 @@ import argparse
 import os
 
 import cv2
-from src.combine import combine
+from duplicated.combine_duplicate import combine
 from src.load_config import load_yml
 from src.misc_utils import checkdir, copydir, annotate_all, save_crop
 

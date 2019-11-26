@@ -8,30 +8,13 @@ import numpy as np
 
 from src.base import Base
 from src.load_config import load_yml
-from src.misc_utils import attach_file_suffix
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description='resize images.')
-
-    parser.add_argument('ymlpath')
-
-    args = parser.parse_args()
-
-    return args
+from src.misc_utils import attach_file_suffix, binaryzation, args, random_crop
 
 
 class Transform(Base):
     def __init__(self, cfg):
         Base.__init__(self, cfg)
-        self.mode = '1_to_1'
-
-    def _random_crop(self, img, w, h):
-        height, width, _ = img.shape
-        x = np.random.randint(0, width - w)
-        y = np.random.randint(0, height - h)
-        patch = img[y:y + h, x:x + w]
-        return patch
+        self.mode = '1_to_1' if args.mode == 'default' else args.mode
 
     def _handle_image(self, input_path, output_path, compare_path=None, abs_out_dir=None, filename=None):
 
@@ -63,6 +46,12 @@ class Transform(Base):
 
                 changed = False
 
+            if 'binary' in trans:
+                binary = trans['binary']
+                thresh = binary['thresh']
+                img = binaryzation(img, thresh=thresh)
+                changed = save_middle(binary)
+
             if 'resize' in trans:
                 resize = trans['resize']
                 w, h = resize['w'], resize['h']
@@ -73,10 +62,15 @@ class Transform(Base):
                 crop = trans['random_crop']
                 size = crop['size']
                 w, h = size['w'], size['h']
-                patchs = crop['patchs']
+                patchs = crop['patches']
+                if 'save' in crop:
+                    suffix = crop['save']
+                    save_path = attach_file_suffix(output_path, suffix)
+                else:
+                    save_path = output_path
                 for i in range(patchs + 1):
-                    patch = self._random_crop(img, w, h)
-                    output_suffux_path = attach_file_suffix(output_path, str(i + 1))
+                    patch = random_crop(img, w, h)
+                    output_suffux_path = attach_file_suffix(save_path, '_%04d' % i)
                     print('   %s \033[1;32m->\033[0m %s' % (input_path, output_suffux_path))
                     self.save_img(output_suffux_path, patch)
 
@@ -133,6 +127,5 @@ def transform(cfg):
 
 
 if __name__ == '__main__':
-    args = parse_args()
     cfg = load_yml(args.ymlpath)
     transform(cfg)

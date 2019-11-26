@@ -11,20 +11,14 @@ from src.load_config import load_yml
 from src.misc_utils import checkdir, attach_file_suffix
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description='resize images.')
-
-    parser.add_argument('ymlpath')
-
-    args = parser.parse_args()
-
-    return args
-
-
 class Split(Base):
     def __init__(self, cfg):
         Base.__init__(self, cfg)
-        self.mode = '1_to_n'  # want all splits in one folder? try setting mode to `1_to_1`
+        """
+            want all splits in one folder? try setting mode to `1_to_1`
+        """
+        self.mode = '1_to_n' if args.mode == 'default' else args.mode
+
         split = self.cfg['split']
         self._tiles = split['tiles']
 

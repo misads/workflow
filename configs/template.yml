@@ -1,53 +1,82 @@
-_meta_:
-    input_root: ''  # input
-    output_root: ''
+# General Structure
+################################################################################
+# workflow:
+#     - op1:  # can be any name you like
+#         __meta__:
+#             input: 'val'
+#             output: 'split'
+#             recursively: False  # recursively = True: include sub directory
+#             # folder_list: ["12", "4", "29", "94", "96"] 
+#         split:  # what operation
+#             tiles:  # operation configs
+#                 w: 2
+#                 h: 2
+#
+#     - op2:  # next op
+#         __meta__:
+#             ....
+################################################################################
 
-crop:
-    w: 400
-    h: 400
+# All ops template
 
-flip:
-    vertical: False
-    horizontal: False
+workflow:
+    - template:
+        __meta__:
+            input: 'input'
+            compare: 'compare'
+            output: 'output'
 
-resize:
-    w: 400
-    h: 400
+        combine:
+            one_folder_in_axis: 'xy'
+            priority_axis: 'x'
+            tiles:
+                w: 2  # num_a_row
+                h: 2  # rows(folders)
+        split:
+            tiles:
+                w: 4
+                h: 4
 
-rotate:
-    enable: False
-    angle: 90   # clockwise
+        evaluate:
+            - f1
+            - f2
+            - ssim
 
-combination:
-    folder_path: "auto"  # auto or manual
-    folder: ['a', 'b', 'c', 'd']  # only works in manual mode
-    tiles:
-        w: 5  # num_a_row
-        h: 4  # rows(folders)
-    image_size:
-        w: 400
-        h: 337
-    gap:
-        dw: 15
-        dh: 15
-    input_dir: 'input'
-    output: 'combine.png'
+        transformation:
+            - copy:
+                save: '_1'
+            - rotate:
+                - 90
+                - 90
+                - 90:
+                    save: '_270'
+            - flip:
+                - vertical:
+                    save: '_v.tiff'
+                - horizontal:
+                    save: '_vh.jpg'
+                - both
 
-split:
+            - resize:
+                w: 200
+                h: 200
+                save: '_200.png'
 
-comparison_annotation:
-    folder_path: "manual"  # auto or manual
-    mode: "compare"  # compare or crop
-    folder: ["a", "b", "c", "d"]  # only works in manual mode
-    annotations: [1, 2, 1, 2]
-    color:
-        - ['green']
-        - ['green', 'wheat']
-        - ['red']
-        - ['red', 'green']
-    thickness: 5
-    input_dir: 'input'
-    output_folder: 'compare'
+            - fix_crop:
+                from:
+                    left: 0
+                    top: 0
+                size:
+                    w: 200
+                    h: 200
+                save: '_crop'
+
+            - random_crop:
+                size:
+                    w: 256
+                    h: 256
+                patches: 100
+                save: '_crop.tiff'
 
 
 

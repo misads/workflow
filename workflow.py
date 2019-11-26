@@ -2,7 +2,9 @@
 
 import argparse
 
+from src.find_threshhold import find_threshold
 from src.load_config import load_yml
+from src.misc_utils import args
 from src.transform import transform
 from src.split import split
 from src.combine import combine
@@ -12,17 +14,9 @@ from src.evaluate import evaluate
 ops_dict = {'transformation': transform,
             'split': split,
             'combine': combine,
-            'evaluate': evaluate
+            'evaluate': evaluate,
+            'find_threshold': find_threshold
             }
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(description='usage: python [filename].py configs/[config].yml')
-    parser.add_argument('ymlpath')
-
-    args = parser.parse_args()
-
-    return args
 
 
 def workflow(cfg):
@@ -51,6 +45,5 @@ def workflow(cfg):
 
 
 if __name__ == '__main__':
-    args = parse_args()
     cfg = load_yml(args.ymlpath)
     workflow(cfg)
