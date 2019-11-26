@@ -15,7 +15,6 @@ ops_dict = {'transformation': transform,
             'split': split,
             'combine': combine,
             'evaluate': evaluate,
-            'find_threshold': find_threshold
             }
 
 

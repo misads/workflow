@@ -45,7 +45,7 @@ class Combination(Base):
         self._image_size = {'w': w, 'h': h}
         self._create_background()
 
-    def combine_on_folder_in_xy(self):
+    def _combine_one_folder_in_xy(self):
         for f in self.folders:
             dir = self.folders[f]
             if not dir:
@@ -78,7 +78,7 @@ class Combination(Base):
 
     def _handle_dict(self, dir_dict, len_x, len_y):
         if self._one_folder_axis == 'xy':
-            self.combine_on_folder_in_xy()
+            self._combine_one_folder_in_xy()
 
             return
         folders = dir_dict

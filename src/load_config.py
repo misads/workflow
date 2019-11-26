@@ -11,7 +11,7 @@ def load_yml(file='configs/config.yml', op=None):
         try:
             cfg = yaml.safe_load(f.read())
         except yaml.YAMLError:
-            raise Exception('Error parsing YAML file: config.yml')
+            raise Exception('Error parsing YAML file: ' + file)
 
     if op:
         return cfg[op]
