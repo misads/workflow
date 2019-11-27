@@ -50,6 +50,27 @@
 
 4. Run `python workflow.py configs/my_workflow.yml`
 
+###Complete Usage
+
+```bash
+usage: workflow.py [-h] [--mode {default, 1_to_1, 1_to_n, n_to_1, 2_to_0, n_to_0}]
+                   ymlpath
+
+usage: python [filename].py configs/[config].yml
+
+positional arguments:
+  ymlpath
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --mode {default, 1_to_1, 1_to_n, n_to_1, 2_to_0, n_to_0}
+                        set to `default` or `{x}_to_{y}`. x: num of images
+                        handled once, y: if n, a folder will be created for
+                        each input image.
+```
+
+
+
 ### Yml File Example
 
 　　The following example shows the configure file to **split** images in folder `val` into 2 × 2 tiles (saved in `split` folder) and then **combine** them back (saved in `combine` folder). Afterwards, our `op3` will check if the inputs and combined results are exactly the same. (by *ssim*)
