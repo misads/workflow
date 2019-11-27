@@ -56,7 +56,6 @@ class Base(object):
                 raise FileNotFoundError('compare directory "%s" not found' % self._compare_root)
 
             self._folder_list = safe_key(meta, 'folder_list')
-            self.save_format = safe_key(meta, 'save_format')
 
         except KeyError:
             raise Exception('key missing in config file (*.yml)')

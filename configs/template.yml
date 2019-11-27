@@ -20,28 +20,50 @@
 # All ops template
 
 workflow:
-    - template:
+    - template_op1:
         __meta__:
             input: 'input'
             compare: 'compare'
             output: 'output'
+            recursively: True  # include sub directory
+            # folder_list: ["12", "4", "29", "94", "96"]  # if assigned, only selected folders will be handled
 
+        #################
+        #    Combine
+        #################
         combine:
-            one_folder_in_axis: 'xy'
+            one_folder_in_axis: 'xy'        # `x`/`y` or `xy`
             priority_axis: 'x'
-            tiles:
-                w: 2  # num_a_row
+            tiles:                          # if combine each folder into one image (`xy` axis), tiles must be specified.
+                w: 2 # num_a_row
                 h: 2  # rows(folders)
+            image_size:
+                w: 400
+                h: 337
+            gap:
+                dw: 15
+                dh: 15
+
+        #################
+        #     Split
+        #################
         split:
             tiles:
                 w: 4
                 h: 4
 
+        #################
+        #    Evaluate
+        #################
         evaluate:
             - f1
             - f2
             - ssim
+            - psnr
 
+        #################
+        # Transformation
+        #################
         transformation:
             - copy:
                 save: '_1'

@@ -20,7 +20,7 @@ class Combination(Base):
         self._axis = self._combination['priority_axis']
         self._one_folder_axis = safe_key(self._combination, 'one_folder_in_axis')
 
-        self._tiles = self._combination['tiles']
+        self._tiles = safe_key(self._combination, 'tiles')
 
         self._gap = safe_key(self._combination, 'gap', {'dw': 0, 'dh': 0})
 
@@ -31,6 +31,8 @@ class Combination(Base):
             self._image_size = None
 
     def _create_background(self):
+        if self._tiles is None:
+            return
         nw, nh = self._tiles['w'], self._tiles['h']
         w1, h1 = self._image_size['w'], self._image_size['h']
         dw1, dh1 = self._gap['dw'], self._gap['dh']
@@ -41,8 +43,9 @@ class Combination(Base):
 
     def _handle_image(self, input_path, output_path, compare_path=None, abs_out_dir=None, filename=None):
         img = cv2.imread(input_path)
-        h, w, _ = img.shape
-        self._image_size = {'w': w, 'h': h}
+        if self._image_size is None:
+            h, w, _ = img.shape
+            self._image_size = {'w': w, 'h': h}
         self._create_background()
 
     def _combine_one_folder_in_xy(self):
@@ -65,6 +68,8 @@ class Combination(Base):
                     img = cv2.imread(input_path)
                     w1, h1 = self._image_size['w'], self._image_size['h']
                     dw1, dh1 = self._gap['dw'], self._gap['dh']
+                    if img.shape[0] != h1 or img.shape[1] != w1:
+                        img = cv2.resize(img, (w1, h1))
                     self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
 
             print('\033[1;32m->\033[0m')
@@ -81,50 +86,95 @@ class Combination(Base):
             self._combine_one_folder_in_xy()
 
             return
-        folders = dir_dict
-        keylist = []
-        for f in folders:
-            if f:
-                keylist.append(f)
-        filelist = folders[keylist[0]]
 
-        if self._axis == 'xy':
-            pass
-        elif self._axis == 'x':
-            for file_index in range(len(filelist)):
+        folder_list = [folder for folder in dir_dict]
+
+        if self._one_folder_axis == 'x':
+            if self._tiles is None:
+                self._tiles = {'w': len_y, 'h': len_x}
                 self._create_background()
-                for h in range(self._tiles['h']):
-                    for w in range(self._tiles['w']):
-                        i = h * self._tiles['w'] + w
-                        dir = keylist[i]
-                        input_path = self._get_input_abs_path(dir, folders[dir][file_index])
-                        print(input_path + ' & ', end='')
-                        img = cv2.imread(input_path)
-                        w1, h1 = self._image_size['w'], self._image_size['h']
-                        dw1, dh1 = self._gap['dw'], self._gap['dh']
-                        self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
+            for h in range(len_x):
+                folder = folder_list[h]
+                file_list = dir_dict[folder]
+                for w in range(len_y):
+                    file = file_list[w]
+                    input_path = self._get_input_abs_path(folder, file)
+                    print(input_path + ' & ', end='')
+                    img = cv2.imread(input_path)
+                    w1, h1 = self._image_size['w'], self._image_size['h']
+                    dw1, dh1 = self._gap['dw'], self._gap['dh']
+                    if img.shape[0] != h1 or img.shape[1] != w1:
+                        img = cv2.resize(img, (w1, h1))
+                    self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
 
-                print('\033[1;32m->\033[0m')
-                output_path = self._get_output_abs_path('', filelist[file_index])
-                self.save_img(output_path, self._back)
+            print('\033[1;32m->\033[0m')
+            output_path = self._get_output_abs_path('', 'combine.png')
+            self.save_img(output_path, self._back)
 
-        elif self._axis == 'y':
-            for file_index in range(len(filelist)):
+        elif self._one_folder_axis == 'y':
+            if self._tiles is None:
+                print(len_x)
+                self._tiles = {'w': len_x, 'h': len_y}
                 self._create_background()
-                for w in range(self._tiles['w']):
-                    for h in range(self._tiles['h']):
-                        i = w * self._tiles['h'] + h
-                        dir = keylist[i]
-                        input_path = self._get_input_abs_path(dir, folders[dir][file_index])
-                        print(input_path + ' & ', end='')
-                        img = cv2.imread(input_path)
-                        w1, h1 = self._image_size['w'], self._image_size['h']
-                        dw1, dh1 = self._gap['dw'], self._gap['dh']
-                        self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
+            for w in range(len_x):
+                folder = folder_list[w]
+                file_list = dir_dict[folder]
+                for h in range(len_y):
+                    file = file_list[h]
+                    input_path = self._get_input_abs_path(folder, file)
+                    print(input_path + ' & ', end='')
+                    img = cv2.imread(input_path)
+                    w1, h1 = self._image_size['w'], self._image_size['h']
+                    dw1, dh1 = self._gap['dw'], self._gap['dh']
+                    if img.shape[0] != h1 or img.shape[1] != w1:
+                        img = cv2.resize(img, (w1, h1))
+                    self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
 
-                print('\033[1;32m->\033[0m')
-                output_path = self._get_output_abs_path('', filelist[file_index])
-                self.save_img(output_path, self._back)
+            print('\033[1;32m->\033[0m')
+            output_path = self._get_output_abs_path('', 'combine.png')
+            self.save_img(output_path, self._back)
+
+        # if self._axis == 'xy':
+        #     pass
+        # elif self._axis == 'x':
+        #     for file_index in range(len(filelist)):
+        #         self._create_background()
+        #         for h in range(self._tiles['h']):
+        #             for w in range(self._tiles['w']):
+        #                 i = h * self._tiles['w'] + w
+        #                 dir = keylist[i]
+        #                 input_path = self._get_input_abs_path(dir, folders[dir][file_index])
+        #                 print(input_path + ' & ', end='')
+        #                 img = cv2.imread(input_path)
+        #                 w1, h1 = self._image_size['w'], self._image_size['h']
+        #                 dw1, dh1 = self._gap['dw'], self._gap['dh']
+        #                 if img.shape[0] != h1 or img.shape[1] != w1:
+        #                     img = cv2.resize(img, (w1, h1))
+        #                 self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
+        #
+        #         print('\033[1;32m->\033[0m')
+        #         output_path = self._get_output_abs_path('', filelist[file_index])
+        #         self.save_img(output_path, self._back)
+        #
+        # elif self._axis == 'y':
+        #     for file_index in range(len(filelist)):
+        #         self._create_background()
+        #         for w in range(self._tiles['w']):
+        #             for h in range(self._tiles['h']):
+        #                 i = w * self._tiles['h'] + h
+        #                 dir = keylist[i]
+        #                 input_path = self._get_input_abs_path(dir, folders[dir][file_index])
+        #                 print(input_path + ' & ', end='')
+        #                 img = cv2.imread(input_path)
+        #                 w1, h1 = self._image_size['w'], self._image_size['h']
+        #                 dw1, dh1 = self._gap['dw'], self._gap['dh']
+        #                 if img.shape[0] != h1 or img.shape[1] != w1:
+        #                     img = cv2.resize(img, (w1, h1))
+        #                 self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
+        #
+        #         print('\033[1;32m->\033[0m')
+        #         output_path = self._get_output_abs_path('', filelist[file_index])
+        #         self.save_img(output_path, self._back)
 
 
 def combine(cfg):

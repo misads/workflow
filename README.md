@@ -91,5 +91,7 @@ workflow:
 
 　　The running result snapshot is shown in preceding *What Can it Do* part.
 
+　　Also, a **full-version** configure template is available [here](https://github.com/misads/img_workflow/blob/master/configs/template.yml).
+
 
 
