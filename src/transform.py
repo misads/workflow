@@ -59,6 +59,7 @@ class Transform(Base):
                 changed = save_middle(resize)
 
             if 'random_crop' in trans:
+                np.random.seed(2019)
                 crop = trans['random_crop']
                 size = crop['size']
                 w, h = size['w'], size['h']
