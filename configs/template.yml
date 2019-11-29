@@ -100,5 +100,14 @@ workflow:
                 patches: 100
                 save: '_crop.tiff'
 
+            - overlap_crop:
+                size:
+                    w: 256
+                    h: 256
+                patches:
+                    x: 10
+                    y: 10
+                save: '_crop.tiff'
+
 
 

@@ -8,13 +8,13 @@ from src.misc_utils import args
 from src.transform import transform
 from src.split import split
 from src.combine import combine
-# from src.evaluate import evaluate
+from src.evaluate import evaluate
 
 # operations dictionary, map strings to functions
 ops_dict = {'transformation': transform,
             'split': split,
             'combine': combine,
-            # 'evaluate': evaluate,
+            'evaluate': evaluate,
             }
 
 

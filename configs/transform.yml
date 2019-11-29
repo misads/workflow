@@ -15,12 +15,14 @@ workflow:
             recursively: True  # recursively = True: include sub directory
 
         transformation:
-            - random_crop:
+            - overlap_crop:
                 size:
                     w: 256
                     h: 256
-                patches: 100
-                save: '_crop.tiff'
+                patches:
+                    x: 10
+                    y: 10
+                #save: '_crop.tiff'
 
 
 #    - op1:
@@ -79,6 +81,15 @@ workflow:
 #                    w: 256
 #                    h: 256
 #                patches: 100
+#                save: '_crop.tiff'
+
+#            - overlap_crop:
+#                size:
+#                    w: 256
+#                    h: 256
+#                patches:
+#                    x: 10
+#                    y: 10
 #                save: '_crop.tiff'
 
 

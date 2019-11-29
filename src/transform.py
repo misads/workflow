@@ -77,6 +77,38 @@ class Transform(Base):
 
                 changed = False
 
+            if 'overlap_crop' in trans:
+                crop = trans['overlap_crop']
+                size = crop['size']
+                patch_w, patch_h = size['w'], size['h']  # size for one patch
+                pathes = crop['patches']
+                px, py = pathes['x'], pathes['y']
+                if 'save' in crop:
+                    suffix = crop['save']
+                    save_path = attach_file_suffix(output_path, suffix)
+                else:
+                    save_path = output_path
+                height, width, _ = img.shape
+                stride_x = (width - patch_w) // (px-1)
+                stride_y = (height - patch_h) // (py-1)
+                for i in range(py):  # height patches
+                    for j in range(px):
+                        if i < py - 1:
+                            y = i * stride_y
+                        else:
+                            y = height - patch_h  # the last patch not following the stride
+                        if j < px - 1:
+                            x = j * stride_x
+                        else:
+                            x = width - patch_w
+                        patch = img[y:y + patch_h, x:x + patch_w]
+
+                        output_suffux_path = attach_file_suffix(save_path, '_%04d_%04d' % (i, j))
+                        print('   %s \033[1;32m->\033[0m %s' % (input_path, output_suffux_path))
+                        self.save_img(output_suffux_path, patch)
+
+                changed = False
+
             if 'fix_crop' in trans:
                 crop = trans['fix_crop']
                 size = crop['size']

@@ -21,6 +21,7 @@ class Combination(Base):
         self._one_folder_axis = safe_key(self._combination, 'one_folder_in_axis')
 
         self._tiles = safe_key(self._combination, 'tiles')
+        self._combine_size = safe_key(self._combination, 'combine_size')
 
         self._gap = safe_key(self._combination, 'gap', {'dw': 0, 'dh': 0})
 
@@ -33,7 +34,15 @@ class Combination(Base):
     def _create_background(self):
         if self._tiles is None:
             return
-        nw, nh = self._tiles['w'], self._tiles['h']
+
+        if self._combine_size is not None:
+            # overlap mode
+            height, width = self._combine_size['h'], self._combine_size['w']
+            self._back = np.zeros((height, width, 3))  # white background
+            self._cont = np.zeros((height, width))
+            return
+
+        nw, nh = self._tiles['x'], self._tiles['y']
         w1, h1 = self._image_size['w'], self._image_size['h']
         dw1, dh1 = self._gap['dw'], self._gap['dh']
         width = nw * w1 + (nw - 1) * dw1  # width for combination image
@@ -56,21 +65,55 @@ class Combination(Base):
             dir.sort()
             self._create_background()
 
-            for w in range(self._tiles['w']):
-                for h in range(self._tiles['h']):
-                    if self._axis == 'x':
-                        i = h * self._tiles['w'] + w
-                    else:
-                        i = w * self._tiles['h'] + h
-                    # dir = keylist[i]
-                    input_path = self._get_input_abs_path(f, dir[i])
-                    print(input_path + ' & ', end='')
-                    img = cv2.imread(input_path)
-                    w1, h1 = self._image_size['w'], self._image_size['h']
-                    dw1, dh1 = self._gap['dw'], self._gap['dh']
-                    if img.shape[0] != h1 or img.shape[1] != w1:
-                        img = cv2.resize(img, (w1, h1))
-                    self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
+            if self._combine_size is not None:
+                width, height = self._combine_size['w'], self._combine_size['h']
+                # overlap
+                base_name = dir[0].split('.')[0][:-10]
+                suffix = dir[0].split('.')[-1]
+                px, py = self._tiles['x'], self._tiles['y']
+                channel = 3
+                for i in range(py):
+                    for j in range(px):
+                        file_name = '%s_%04d_%04d.%s' % (base_name, i, j, suffix)
+                        input_path = self._get_input_abs_path(f, file_name)
+                        print(input_path + ' & ', end='')
+                        img = cv2.imread(input_path)
+                        patch_h, patch_w, channel = img.shape
+                        stride_x = (width - patch_w) // (px - 1)
+                        stride_y = (height - patch_h) // (py - 1)
+
+                        if i < py - 1:
+                            y = i * stride_y
+                        else:
+                            y = height - patch_h  # the last patch not following the stride
+                        if j < px - 1:
+                            x = j * stride_x
+                        else:
+                            x = width - patch_w
+
+                        self._back[y:y + patch_h, x:x + patch_w] += img
+                        self._cont[y:y + patch_h, x:x + patch_w] += 1
+
+                for c in range(channel):
+                    self._back[:, :, c] /= self._cont
+
+            else:
+                # not overlap
+                for w in range(self._tiles['x']):
+                    for h in range(self._tiles['y']):
+                        if self._axis == 'x':
+                            i = h * self._tiles['x'] + w
+                        else:
+                            i = w * self._tiles['y'] + h
+                        # dir = keylist[i]
+                        input_path = self._get_input_abs_path(f, dir[i])
+                        print(input_path + ' & ', end='')
+                        img = cv2.imread(input_path)
+                        w1, h1 = self._image_size['w'], self._image_size['h']
+                        dw1, dh1 = self._gap['dw'], self._gap['dh']
+                        if img.shape[0] != h1 or img.shape[1] != w1:
+                            img = cv2.resize(img, (w1, h1))
+                        self._back[h * (h1 + dh1):h * (h1 + dh1) + h1, w * (w1 + dw1):w * (w1 + dw1) + w1] = img
 
             print('\033[1;32m->\033[0m')
             savename = f if '.' in f else f + '.png'
@@ -91,7 +134,7 @@ class Combination(Base):
 
         if self._one_folder_axis == 'x':
             if self._tiles is None:
-                self._tiles = {'w': len_y, 'h': len_x}
+                self._tiles = {'x': len_y, 'y': len_x}
                 self._create_background()
             for h in range(len_x):
                 folder = folder_list[h]
@@ -114,7 +157,7 @@ class Combination(Base):
         elif self._one_folder_axis == 'y':
             if self._tiles is None:
                 print(len_x)
-                self._tiles = {'w': len_x, 'h': len_y}
+                self._tiles = {'x': len_x, 'y': len_y}
                 self._create_background()
             for w in range(len_x):
                 folder = folder_list[w]
@@ -139,9 +182,9 @@ class Combination(Base):
         # elif self._axis == 'x':
         #     for file_index in range(len(filelist)):
         #         self._create_background()
-        #         for h in range(self._tiles['h']):
-        #             for w in range(self._tiles['w']):
-        #                 i = h * self._tiles['w'] + w
+        #         for h in range(self._tiles['y']):
+        #             for w in range(self._tiles['x']):
+        #                 i = h * self._tiles['x'] + w
         #                 dir = keylist[i]
         #                 input_path = self._get_input_abs_path(dir, folders[dir][file_index])
         #                 print(input_path + ' & ', end='')
@@ -159,9 +202,9 @@ class Combination(Base):
         # elif self._axis == 'y':
         #     for file_index in range(len(filelist)):
         #         self._create_background()
-        #         for w in range(self._tiles['w']):
-        #             for h in range(self._tiles['h']):
-        #                 i = w * self._tiles['h'] + h
+        #         for w in range(self._tiles['x']):
+        #             for h in range(self._tiles['y']):
+        #                 i = w * self._tiles['y'] + h
         #                 dir = keylist[i]
         #                 input_path = self._get_input_abs_path(dir, folders[dir][file_index])
         #                 print(input_path + ' & ', end='')
