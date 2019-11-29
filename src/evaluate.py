@@ -9,8 +9,14 @@ import numpy as np
 from src.base import Base
 from src.load_config import load_yml
 from src.misc_utils import attach_file_suffix, f1, f2, binaryzation
-from skimage.metrics import peak_signal_noise_ratio as compare_psnr
-from skimage.metrics import structural_similarity as compare_ssim
+import skimage
+
+if skimage.__version__.startswith('0.16'):
+    from skimage.metrics import peak_signal_noise_ratio as compare_psnr
+    from skimage.metrics import structural_similarity as compare_ssim
+else:
+    from skimage.measure import compare_psnr
+    from skimage.measure import compare_ssim
 
 
 def parse_args():
