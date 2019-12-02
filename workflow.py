@@ -2,7 +2,7 @@
 
 import argparse
 
-
+from src.ensemble import ensemble
 from src.load_config import load_yml
 from src.misc_utils import args
 from src.transform import transform
@@ -15,6 +15,7 @@ ops_dict = {'transformation': transform,
             'split': split,
             'combine': combine,
             'evaluate': evaluate,
+            'ensemble': ensemble,
             }
 
 
