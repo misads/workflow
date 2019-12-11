@@ -3,6 +3,7 @@
 import argparse
 
 from src.ensemble import ensemble
+from src.labeling import labeling
 from src.load_config import load_yml
 from src.misc_utils import args
 from src.transform import transform
@@ -16,6 +17,7 @@ ops_dict = {'transformation': transform,
             'combine': combine,
             'evaluate': evaluate,
             'ensemble': ensemble,
+            'labeling': labeling
             }
 
 

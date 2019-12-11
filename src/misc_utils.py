@@ -121,11 +121,13 @@ def get_file_paths(folder):
     return np.array(image_file_paths)
 
 
-def is_file_image(filename):
+def is_file_image(filename: str):
     img_ex = ['jpg', 'png', 'bmp', 'jpeg', 'tiff']
     if '.' not in filename:
         return False
     s = filename.split('.')
+
+    # return any(filename.endswith('extension') for extension in img_ex)
 
     if s[-1].lower() not in img_ex:
         return False

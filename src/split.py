@@ -8,7 +8,7 @@ import numpy as np
 
 from src.base import Base
 from src.load_config import load_yml
-from src.misc_utils import checkdir, attach_file_suffix
+from src.misc_utils import checkdir, attach_file_suffix, args
 
 
 class Split(Base):
@@ -20,6 +20,8 @@ class Split(Base):
         self.mode = '1_to_n' if args.mode == 'default' else args.mode
 
         split = self.cfg['split']
+        if 'save' in split:
+            self._suffix = split['save']
         self._tiles = split['tiles']
 
     def _handle_image(self, input_path, output_path, compare_path=None, abs_out_dir=None, filename=None):
@@ -28,6 +30,9 @@ class Split(Base):
         h, w = self._tiles['h'], self._tiles['w']
         h1 = int(height / h)
         w1 = int(width / w)
+
+        if self._suffix:
+            output_path = attach_file_suffix(output_path, self._suffix)
 
         for j in range(h):
             for i in range(w):
