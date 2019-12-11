@@ -1,0 +1,19 @@
+#__meta__:
+#    input_root: 'raw'
+#    compare_root: ''
+#    output_root: 'trans'
+#    recursively: True  # include sub directory
+#    # folder_list: ["12", "4", "29", "94", "96"]  # if assigned, only selected folders will be handled
+#    # save_format: '.jpg'
+
+
+workflow:
+    - op1:
+        __meta__:
+            input: 'vis_B'
+            output: 'vis_B_label'
+            recursively: True  # recursively = True: include sub directory
+
+        labeling:
+            - r
+
