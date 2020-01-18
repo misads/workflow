@@ -122,6 +122,8 @@ class Combination(Base):
                 output_path = self._get_output_abs_path(f, savename)
             else:
                 output_path = self._get_output_abs_path('', savename)
+
+            os.makedirs(self._get_output_abs_path('','.'), exist_ok=True)
             self.save_img(output_path, self._back)
 
     def _handle_dict(self, dir_dict, len_x, len_y):

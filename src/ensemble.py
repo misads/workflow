@@ -34,7 +34,7 @@ class Ensemble(Base):
                 # print(folder)
                 input_path = self._get_input_abs_path(folder_name, file_list[i])
                 print(input_path + ' & ', end='')
-                img = cv2.imread(input_path)
+                img = cv2.imread(input_path, 0)
                 if ensemble_img is None:
                     ensemble_img = np.array(img, np.float)
                 else:
