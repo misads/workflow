@@ -1,5 +1,5 @@
-## img_workflow
-　　A configurable batch script for several simple image operations (crop, affine transformation, split, combination, comparison, etc.).
+## Workflow (for image)
+　　A configurable batch script for common image operations (crop, affine transformation, split, combination, comparison, etc.).
 
 ### What Can it Do?
 
@@ -48,9 +48,9 @@
     output: 'result'
 ```
 
-4. Run `python workflow.py configs/my_workflow.yml`
+4. Run `python workflow.py configs/my_config.yml`
 
-### Complete Usage
+### Arguments
 
 ```bash
 usage: workflow.py [-h] [--mode {default, 1_to_1, 1_to_n, n_to_1, 2_to_0, n_to_0}]
@@ -63,13 +63,19 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --mode {default, 1_to_1, 1_to_n, n_to_1, 2_to_0, n_to_0}
+  --input INPUT, -i INPUT
+                        input dir (can set in configure file)
+  --output OUTPUT, -o OUTPUT
+                        output dir
+  --compare COMPARE, -c COMPARE
+                        compare dir
+  --yes, -y             ignore confirmations.
+  --mode {default,1_to_1,1_to_n,n_to_1,2_to_0,n_to_0}
                         set to `default` or `{x}_to_{y}`. x: num of images
                         handled once, y: if n, a folder will be created for
                         each input image.
+                        
 ```
-
-
 
 ### Yml File Example
 
@@ -110,9 +116,9 @@ workflow:
               - ssim
 ```
 
-　　The running result snapshot is shown in preceding *What Can it Do* part.
+　　The running result snapshot is shown in *What Can it Do* part.
 
-　　Also, a **full-version** configure template is available [here](https://github.com/misads/img_workflow/blob/master/configs/template.yml).
+　　A more comprehensive configure template is available [here](https://github.com/misads/img_workflow/blob/master/configs/template.yml).
 
 
 

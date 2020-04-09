@@ -7,8 +7,12 @@ import numpy as np
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='usage: python [filename].py configs/[config].yml')
-    parser.add_argument('ymlpath')
+    parser = argparse.ArgumentParser(description='usage: python workflow.py --load [config].yml input_dir')
+    parser.add_argument('ymlpath', help='yml configure file')
+    parser.add_argument('--input', '-i', help='input dir')
+    parser.add_argument('--output', '-o', help='output dir')
+    parser.add_argument('--compare', '-c', help='compare dir')
+    parser.add_argument('--yes', '-y',  action='store_true', help='ignore confirmations.')
     parser.add_argument('--mode', dest='mode',
                         help='set to `default` or `{x}_to_{y}`. x: num of images handled once, y: if n, a folder ' +
                              'will be created for each input image.',
