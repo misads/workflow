@@ -9,8 +9,8 @@
 #             # folder_list: ["12", "4", "29", "94", "96"] 
 #         split:  # what operation
 #             tiles:  # operation configs
-#                 w: 2
-#                 h: 2
+#                 x: 2
+#                 y: 2
 #
 #     - op2:  # next op
 #         __meta__:
@@ -35,8 +35,8 @@ workflow:
             one_folder_in_axis: 'xy'        # `x`/`y` or `xy`
             priority_axis: 'x'
             tiles:                          # if combine each folder into one image (`xy` axis), tiles must be specified.
-                w: 2 # num_a_row
-                h: 2  # rows(folders)
+                x: 2  # num_a_row
+                y: 2  # rows(folders)
             image_size:
                 w: 400
                 h: 337
@@ -49,8 +49,8 @@ workflow:
         #################
         split:
             tiles:
-                w: 4
-                h: 4
+                x: 4
+                y: 4
 
         #################
         #    Evaluate

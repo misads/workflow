@@ -15,8 +15,8 @@ workflow:
             recursively: False  # recursively = True: include sub directory
         split:
             tiles:
-                w: 2
-                h: 2
+                x: 2
+                y: 2
 
     - op2:
         __meta__:
@@ -27,8 +27,8 @@ workflow:
             one_folder_in_axis: 'xy'
             priority_axis: 'x'
             tiles:
-                w: 2  # num_a_row
-                h: 2  # rows(folders)
+                x: 2  # num_a_row
+                y: 2  # rows(folders)
 
     - op3:
           __meta__:

@@ -40,8 +40,8 @@ workflow:
 
 #        split:
 #            tiles:
-#                w: 4
-#                h: 4
+#                x: 4
+#                y: 4
 #        transformation:
 #            - copy:
 #                save: ''

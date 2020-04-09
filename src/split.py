@@ -20,14 +20,14 @@ class Split(Base):
         self.mode = '1_to_n' if args.mode == 'default' else args.mode
 
         split = self.cfg['split']
-        if 'save' in split:
-            self._suffix = split['save']
+        self._suffix = split.get('save')
+
         self._tiles = split['tiles']
 
     def _handle_image(self, input_path, output_path, compare_path=None, abs_out_dir=None, filename=None):
         img = cv2.imread(input_path)
         height, width, _ = img.shape
-        h, w = self._tiles['h'], self._tiles['w']
+        h, w = self._tiles['y'], self._tiles['x']
         h1 = int(height / h)
         w1 = int(width / w)
 
