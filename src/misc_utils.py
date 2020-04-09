@@ -7,7 +7,7 @@ import numpy as np
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='usage: python workflow.py --load [config].yml input_dir')
+    parser = argparse.ArgumentParser(description='usage: python workflow.py [config].yml --input input_dir')
     parser.add_argument('ymlpath', help='yml configure file')
     parser.add_argument('--input', '-i', help='input dir')
     parser.add_argument('--output', '-o', help='output dir')

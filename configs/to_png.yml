@@ -1,0 +1,31 @@
+# General Structure
+################################################################################
+# workflow:
+#     - op1:  # can be any name you like
+#         __meta__:
+#             input: 'val'
+#             output: 'split'
+#             recursively: False  # recursively = True: include sub directory
+#             # folder_list: ["12", "4", "29", "94", "96"] 
+#         split:  # what operation
+#             tiles:  # operation configs
+#                 w: 2
+#                 h: 2
+#
+#     - op2:  # next op
+#         __meta__:
+#             ....
+################################################################################
+
+# A template 
+
+workflow:
+    - op1:
+        __meta__:
+            input: 'input'
+            output: 'to_png'
+
+        transformation:
+            - copy:
+                save: '.png'
+            
