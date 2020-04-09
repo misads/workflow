@@ -53,7 +53,9 @@
 ### Arguments
 
 ```bash
-usage: workflow.py [-h] [--mode {default, 1_to_1, 1_to_n, n_to_1, 2_to_0, n_to_0}]
+usage: workflow.py [-h] [--input INPUT] [--output OUTPUT] [--compare COMPARE]
+                   [--yes]
+                   [--mode {default,1_to_1,1_to_n,n_to_1,2_to_0,n_to_0}]
                    ymlpath
 
 usage: python [filename].py configs/[config].yml
